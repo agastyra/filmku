@@ -1,3 +1,11 @@
 * {
   font-family: "Open Sans", sans-serif;
 }
+
+.card img.card-img-top {
+  height: 354px;
+  width: auto;
+  object-fit: cover;
+  object-position: top;
+  overflow: hidden;
+}

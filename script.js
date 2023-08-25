@@ -73,6 +73,7 @@ formSearch.addEventListener("submit", (e) => {
           btn.addEventListener("click", function () {
             const modalFilm = document.querySelector("#detail-film");
 
+            const poster = modalFilm.querySelector("#detail-film-poster");
             const judul = modalFilm.querySelector("#judul");
             const plot = modalFilm.querySelector(".plot");
             const genre = modalFilm.querySelector(".genre");
@@ -86,6 +87,7 @@ formSearch.addEventListener("submit", (e) => {
             getMovies({
               url: `https://www.omdbapi.com/?apikey=${API_KEY}&i=${this.dataset.imdb}`,
               success: (movie) => {
+                poster.src = movie.Poster;
                 judul.textContent = movie.Title;
                 plot.textContent = movie.Plot;
                 genre.textContent = movie.Genre;
