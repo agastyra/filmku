@@ -32,7 +32,7 @@ formSearch.addEventListener("submit", (e) => {
     return false;
   } else {
     getMovies({
-      url: `http://www.omdbapi.com/?apikey=${API_KEY}&s=${txtKeyword.value}`,
+      url: `https://www.omdbapi.com/?apikey=${API_KEY}&s=${txtKeyword.value}`,
       success: (result) => {
         const movies = result.Search ?? [];
         const movieList = document.querySelector("#movie-list");
