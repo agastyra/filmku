@@ -23,7 +23,16 @@
   </head>
   <body>
     <div class="container">
-      <h3 class="my-5">MovieHub: Temukan Film Favorit mu!</h3>
+      <h3 class="mt-5 mb-3">MovieHub: Temukan Film Favorit mu!</h3>
+
+      <div class="row mb-5">
+        <div class="col-lg-6">
+          <form id="form-search" class="d-flex gap-3">
+            <input type="text" name="keyword" class="form-control" id="keyword" placeholder="Naruto, Dragon Ball, Avengers...">
+            <button class="btn btn-primary" type="submit" id="search">Cari</button>
+          </form>
+        </div>
+      </div>
 
       <div class="row" id="movie-list"></div>
 
@@ -47,8 +56,7 @@
               ></button>
             </div>
             <div class="modal-body">
-              <p class="plot">
-              </p>
+              <p class="plot"></p>
               <p>Genre: <span class="genre fst-italic"></span></p>
               <p>
                 Tanggal Rilis:
@@ -72,18 +80,6 @@
                 Ratings: 
                 <ul class="list-unstyled ratings"></ul>
               </p>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-              <button type="button" class="btn btn-primary">
-                Save changes
-              </button>
             </div>
           </div>
         </div>
