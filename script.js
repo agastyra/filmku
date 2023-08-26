@@ -1,57 +1,39 @@
 const API_KEY = "8279cf5a";
 
-// Get Movies by Title
-const txtKeyword = document.querySelector("#keyword");
+// Get movies by title when submit search form
 const formSearch = document.querySelector("#form-search");
+const inputSearch = document.querySelector("#keyword");
 
-formSearch.addEventListener("submit", (e) => {
+formSearch.addEventListener("submit", async function (e) {
   e.preventDefault();
 
   if (
-    txtKeyword.value == "" ||
-    txtKeyword.value == undefined ||
-    txtKeyword.value == null
+    inputSearch.value == "" ||
+    inputSearch.value == undefined ||
+    inputSearch.value == null
   ) {
     return false;
   } else {
-    fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${txtKeyword.value}`)
-      .then((response) => response.json())
-      .then((result) => {
-        const movies = result.Search ?? [];
-        const movieList = document.querySelector("#movie-list");
-        let el = "";
-
-        if (movies.length != 0) {
-          movies.forEach((movie) => {
-            el += getMovieCard(movie);
-          });
-        } else {
-          el = `<p class="text-muted">Film atau series tidak ditemukan.</p>`;
-        }
-
-        movieList.innerHTML = el;
-
-        // Get Movie By imdbID
-        const btn_lihat_detail = document.querySelectorAll(".lihat-detail");
-
-        btn_lihat_detail.forEach((btn) => {
-          btn.addEventListener("click", function () {
-            fetch(
-              `https://www.omdbapi.com/?apikey=${API_KEY}&i=${this.dataset.imdb}`
-            )
-              .then((response) => response.json())
-              .then((movie) => {
-                getDetailMovieModal(movie);
-              })
-              .catch((e) => console.error(e));
-          });
-        });
-      })
-      .catch((e) => console.error(e));
+    const movies = await getMovieData(inputSearch.value);
+    updateMovieUI(movies);
   }
 });
 
-function getMovieCard(movie) {
+// Get detail movie by imdb ID
+document.addEventListener("click", async function (e) {
+  if (e.target.classList.contains("lihat-detail")) {
+    const movie = await getDetailMovieData(e.target.dataset.imdb);
+    updateDetailMovieModal(movie);
+  }
+});
+
+function getMovieData(keyword) {
+  return fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${keyword}`)
+    .then((response) => response.json())
+    .then((movies) => movies.Search);
+}
+
+function getMovieCards(movie) {
   return `<div class="col-lg-4 mb-3">
     <div class="card">
       <img src="${movie.Poster}" class="card-img-top" />
@@ -73,7 +55,23 @@ function getMovieCard(movie) {
   </div>`;
 }
 
-function getDetailMovieModal(movie) {
+function updateMovieUI(movies) {
+  const movieList = document.querySelector("#movie-list");
+  let elements = "";
+  movies.forEach((movie) => {
+    elements += getMovieCards(movie);
+  });
+
+  movieList.innerHTML = elements;
+}
+
+function getDetailMovieData(imdb) {
+  return fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdb}`)
+    .then((response) => response.json())
+    .then((movie) => movie);
+}
+
+function updateDetailMovieModal(movie) {
   const modal = document.querySelector(".modal-dialog");
 
   let rating = "";
