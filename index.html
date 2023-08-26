@@ -24,80 +24,48 @@
   <body>
     <div class="container">
       <h3 class="mt-5 mb-3">FilmKu: Temukan Film Favorit mu!</h3>
-      <p class="text-muted">Website ini adalah hasil belajar Javascript Lanjutan dari channel YouTube <a href="https://youtube.com/@sandhikagalihWPU" target="_blank" rel="noopener noreferrer">Web Programming Unpas</a></p>
+      <p class="text-muted">
+        Website ini adalah hasil belajar Javascript Lanjutan dari channel
+        YouTube
+        <a
+          href="https://youtube.com/@sandhikagalihWPU"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Web Programming Unpas</a
+        >
+      </p>
 
       <div class="row mb-5">
         <div class="col-lg-6">
           <form id="form-search" class="d-flex gap-3">
-            <input type="text" name="keyword" class="form-control" id="keyword" placeholder="Naruto, Dragon Ball, Avengers...">
-            <button class="btn btn-primary" type="submit" id="search">Cari</button>
+            <input
+              type="text"
+              name="keyword"
+              class="form-control"
+              id="keyword"
+              placeholder="Naruto, Dragon Ball, Avengers..."
+            />
+            <button class="btn btn-primary" type="submit" id="search">
+              Cari
+            </button>
           </form>
         </div>
       </div>
 
       <div class="row" id="movie-list">
-        <p class="text-muted">
-          Cari film atau series terlebih dahulu.
-        </p>
+        <p class="text-muted">Cari film atau series terlebih dahulu.</p>
       </div>
 
       <!-- Modal -->
-      <div class="modal fade"
+      <div
+        class="modal fade"
         id="detail-film"
         tabindex="-1"
         aria-labelledby="judul"
         aria-hidden="true"
       >
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="judul"></h1>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <div class="row">
-                <div class="col-md-4">
-                  <img src="" alt="" class="img-fluid" id="detail-film-poster">
-                </div>
-                <div class="col-md-8">
-                  <div class="row">
-                    <div class="col-12">
-                      <p>Genre: <span class="genre fst-italic"></span></p>
-                    </div>
-                    <div class="col-12">
-                      <p>Tanggal Rilis: <span class="tanggal-rilis fst-italic"></span></p>
-                    </div>
-                    <div class="col-12">
-                      <p>Durasi Film: <span class="durasi-film fst-italic"></span></p>
-                    </div>
-                    <div class="col-12">
-                      <p>Sutradara: <span class="sutradara fst-italic"></span></p>
-                    </div>
-                    <div class="col-12">
-                      <p>Penulis: <span class="penulis fst-italic"></span></p>
-                    </div>
-                    <div class="col-12">
-                      <p>Pemeran: <span class="pemeran fst-italic"></span></p>
-                    </div>
-                    <div class="col-12">
-                      <p>Ratings: <ul class="list-unstyled ratings"></ul></p>
-                    </div>
-                    <div class="col-12">
-                      <p class="plot"></p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div class="modal-dialog modal-lg modal-dialog-centered"></div>
       </div>
-      
     </div>
 
     <script

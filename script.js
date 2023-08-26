@@ -1,22 +1,5 @@
 const API_KEY = "8279cf5a";
 
-function getMovies(ajax) {
-  const xhr = new XMLHttpRequest();
-
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        ajax.success(JSON.parse(xhr.response));
-      } else if (xhr.status === 404) {
-        ajax.error(xhr.responseText);
-      }
-    }
-  };
-
-  xhr.open("get", ajax.url, true);
-  xhr.send();
-}
-
 // Get Movies by Title
 const txtKeyword = document.querySelector("#keyword");
 const formSearch = document.querySelector("#form-search");
@@ -31,34 +14,16 @@ formSearch.addEventListener("submit", (e) => {
   ) {
     return false;
   } else {
-    getMovies({
-      url: `https://www.omdbapi.com/?apikey=${API_KEY}&s=${txtKeyword.value}`,
-      success: (result) => {
+    fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${txtKeyword.value}`)
+      .then((response) => response.json())
+      .then((result) => {
         const movies = result.Search ?? [];
         const movieList = document.querySelector("#movie-list");
         let el = "";
 
         if (movies.length != 0) {
           movies.forEach((movie) => {
-            el += `<div class="col-lg-4 mb-3">
-            <div class="card">
-                <img src="${movie.Poster}" class="card-img-top" />
-                <div class="card-body">
-                  <h5 class="card-title mb-4">${movie.Title}</h5>
-                  <h6 class="card-subtitle mb-2 text-body-secondary">Tahun rilis: ${movie.Year}</h6>
-                  <h6 class="card-subtitle mb-4 text-body-secondary">Tipe: ${movie.Type}</h6>
-                  <button
-                    type="button"
-                    class="btn btn-primary lihat-detail"
-                    data-bs-toggle="modal"
-                    data-bs-target="#detail-film"
-                    data-imdb="${movie.imdbID}"
-                  >
-                    Lihat Detail
-                  </button>
-                </div>
-              </div>
-          </div>`;
+            el += getMovieCard(movie);
           });
         } else {
           el = `<p class="text-muted">Film atau series tidak ditemukan.</p>`;
@@ -71,45 +36,95 @@ formSearch.addEventListener("submit", (e) => {
 
         btn_lihat_detail.forEach((btn) => {
           btn.addEventListener("click", function () {
-            const modalFilm = document.querySelector("#detail-film");
-
-            const poster = modalFilm.querySelector("#detail-film-poster");
-            const judul = modalFilm.querySelector("#judul");
-            const plot = modalFilm.querySelector(".plot");
-            const genre = modalFilm.querySelector(".genre");
-            const tanggal_rilis = modalFilm.querySelector(".tanggal-rilis");
-            const durasi_film = modalFilm.querySelector(".durasi-film");
-            const sutradara = modalFilm.querySelector(".sutradara");
-            const penulis = modalFilm.querySelector(".penulis");
-            const pemeran = modalFilm.querySelector(".pemeran");
-            const ratings = modalFilm.querySelector(".ratings");
-
-            getMovies({
-              url: `https://www.omdbapi.com/?apikey=${API_KEY}&i=${this.dataset.imdb}`,
-              success: (movie) => {
-                poster.src = movie.Poster;
-                judul.textContent = movie.Title;
-                plot.textContent = movie.Plot;
-                genre.textContent = movie.Genre;
-                tanggal_rilis.textContent = movie.Released;
-                durasi_film.textContent = movie.Runtime;
-                sutradara.textContent = movie.Director;
-                penulis.textContent = movie.Writer;
-                pemeran.textContent = movie.Actors;
-
-                let el = "";
-                movie.Ratings.forEach((rate) => {
-                  el += `<li>${rate.Source}: ${rate.Value}</li>`;
-                });
-
-                ratings.innerHTML = el;
-              },
-              error: (e) => console.error(e),
-            });
+            fetch(
+              `https://www.omdbapi.com/?apikey=${API_KEY}&i=${this.dataset.imdb}`
+            )
+              .then((response) => response.json())
+              .then((movie) => {
+                getDetailMovieModal(movie);
+              })
+              .catch((e) => console.error(e));
           });
         });
-      },
-      error: (e) => console.error(e),
-    });
+      })
+      .catch((e) => console.error(e));
   }
 });
+
+function getMovieCard(movie) {
+  return `<div class="col-lg-4 mb-3">
+    <div class="card">
+      <img src="${movie.Poster}" class="card-img-top" />
+      <div class="card-body">
+        <h5 class="card-title mb-4">${movie.Title}</h5>
+        <h6 class="card-subtitle mb-2 text-body-secondary">Tahun rilis: ${movie.Year}</h6>
+        <h6 class="card-subtitle mb-4 text-body-secondary">Tipe: ${movie.Type}</h6>
+        <button
+          type="button"
+          class="btn btn-primary lihat-detail"
+          data-bs-toggle="modal"
+          data-bs-target="#detail-film"
+          data-imdb="${movie.imdbID}"
+        >
+          Lihat Detail
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function getDetailMovieModal(movie) {
+  const modal = document.querySelector(".modal-dialog");
+
+  let rating = "";
+  movie.Ratings.forEach((rate) => {
+    rating += `<li>${rate.Source}: ${rate.Value}</li>`;
+  });
+
+  modal.innerHTML = `<div class="modal-content">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5" id="judul">${movie.Title}</h1>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-4">
+          <img src="${movie.Poster}" alt="" class="img-fluid" id="detail-film-poster">
+        </div>
+        <div class="col-md-8">
+          <div class="row">
+            <div class="col-12">
+              <p>Genre: <span class="genre fst-italic">${movie.Genre}</span></p>
+            </div>
+            <div class="col-12">
+              <p>Tanggal Rilis: <span class="tanggal-rilis fst-italic">${movie.Released}</span></p>
+            </div>
+            <div class="col-12">
+              <p>Durasi Film: <span class="durasi-film fst-italic">${movie.Runtime}</span></p>
+            </div>
+            <div class="col-12">
+              <p>Sutradara: <span class="sutradara fst-italic">${movie.Director}</span></p>
+            </div>
+            <div class="col-12">
+              <p>Penulis: <span class="penulis fst-italic">${movie.Writer}</span></p>
+            </div>
+            <div class="col-12">
+              <p>Pemeran: <span class="pemeran fst-italic">${movie.Actors}</span></p>
+            </div>
+            <div class="col-12">
+              <p>Ratings: <ul class="list-unstyled ratings">${rating}</ul></p>
+            </div>
+            <div class="col-12">
+              <p class="plot">${movie.Plot}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
