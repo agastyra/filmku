@@ -7,15 +7,11 @@ const inputSearch = document.querySelector("#keyword");
 formSearch.addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  if (
-    inputSearch.value == "" ||
-    inputSearch.value == undefined ||
-    inputSearch.value == null
-  ) {
-    return false;
-  } else {
+  try {
     const movies = await getMovieData(inputSearch.value);
     updateMovieUI(movies);
+  } catch (err) {
+    showError(err);
   }
 });
 
@@ -29,8 +25,20 @@ document.addEventListener("click", async function (e) {
 
 function getMovieData(keyword) {
   return fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${keyword}`)
-    .then((response) => response.json())
-    .then((movies) => movies.Search);
+    .then((response) => {
+      if (response.status === 401) {
+        throw new Error("Terjadi kesalahan terhadap sistem!");
+      }
+
+      return response.json();
+    })
+    .then((movies) => {
+      if (movies.Response == "False") {
+        throw new Error(movies.Error);
+      }
+
+      return movies.Search;
+    });
 }
 
 function getMovieCards(movie) {
@@ -57,6 +65,10 @@ function getMovieCards(movie) {
 
 function updateMovieUI(movies) {
   const movieList = document.querySelector("#movie-list");
+  const errorMessage = document.querySelector(".error-message");
+
+  errorMessage.innerHTML = "";
+
   let elements = "";
   movies.forEach((movie) => {
     elements += getMovieCards(movie);
@@ -125,4 +137,25 @@ function updateDetailMovieModal(movie) {
       </div>
     </div>
   </div>`;
+}
+
+function showError(error) {
+  const el = `<div class="row">
+        <div class="col-6">
+          <div class="alert alert-danger alert-dismissible fade show"
+            role="alert">
+            <strong>${error}</strong>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
+      </div>`;
+
+  const errorMessage = document.querySelector(".error-message");
+
+  errorMessage.innerHTML = el;
 }
